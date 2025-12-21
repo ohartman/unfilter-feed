@@ -1,8 +1,329 @@
-#unfiltered-feed-root {
-  all: initial;
-  font-family: 'Roboto', 'Arial', sans-serif;
+/* The Reddit Robocop - Styles
+   "Your move, creep." */
+
+/* ===== CSS Variables ===== */
+:root {
+  --robocop-silver: #c0c0c0;
+  --robocop-dark: #1a1a2e;
+  --robocop-blue: #00d4ff;
+  --robocop-blue-glow: rgba(0, 212, 255, 0.4);
+  --robocop-red: #ff3366;
+  --robocop-red-glow: rgba(255, 51, 102, 0.4);
+  --robocop-yellow: #ffd93d;
+  --robocop-yellow-glow: rgba(255, 217, 61, 0.4);
+  --robocop-green: #4ade80;
+  --robocop-green-glow: rgba(74, 222, 128, 0.4);
+  --robocop-purple: #a855f7;
+  --robocop-font: 'Segoe UI', 'Roboto', -apple-system, sans-serif;
 }
 
-#unfiltered-feed-root * {
-  box-sizing: border-box;
+/* ===== Badge Base ===== */
+.robocop-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 8px;
+  margin-left: 8px;
+  border-radius: 4px;
+  font-family: var(--robocop-font);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+  background: linear-gradient(135deg, #2a2a3e 0%, #1a1a2e 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  vertical-align: middle;
+  z-index: 100;
+}
+
+.robocop-badge::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  border-radius: 4px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.robocop-badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 
+    0 4px 8px rgba(0, 0, 0, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+.robocop-badge:hover::before {
+  opacity: 1;
+}
+
+.robocop-icon {
+  font-size: 12px;
+  line-height: 1;
+}
+
+.robocop-score {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ===== Badge States ===== */
+
+/* High probability (Likely AI) */
+.robocop-badge.robocop-high {
+  color: var(--robocop-red);
+  border-color: var(--robocop-red);
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    0 0 10px var(--robocop-red-glow),
+    inset 0 1px 0 rgba(255, 51, 102, 0.1);
+  animation: robocop-pulse-red 2s ease-in-out infinite;
+}
+
+.robocop-badge.robocop-high::before {
+  background: radial-gradient(ellipse at center, var(--robocop-red-glow) 0%, transparent 70%);
+}
+
+/* Medium probability (Suspicious) */
+.robocop-badge.robocop-medium {
+  color: var(--robocop-yellow);
+  border-color: var(--robocop-yellow);
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    0 0 8px var(--robocop-yellow-glow),
+    inset 0 1px 0 rgba(255, 217, 61, 0.1);
+}
+
+.robocop-badge.robocop-medium::before {
+  background: radial-gradient(ellipse at center, var(--robocop-yellow-glow) 0%, transparent 70%);
+}
+
+/* Low probability (Uncertain) */
+.robocop-badge.robocop-low {
+  color: var(--robocop-blue);
+  border-color: var(--robocop-blue);
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    0 0 6px var(--robocop-blue-glow),
+    inset 0 1px 0 rgba(0, 212, 255, 0.1);
+}
+
+.robocop-badge.robocop-low::before {
+  background: radial-gradient(ellipse at center, var(--robocop-blue-glow) 0%, transparent 70%);
+}
+
+/* Clean (Likely Human) */
+.robocop-badge.robocop-clean {
+  color: var(--robocop-green);
+  border-color: var(--robocop-green);
+  box-shadow: 
+    0 2px 4px rgba(0, 0, 0, 0.3),
+    0 0 6px var(--robocop-green-glow),
+    inset 0 1px 0 rgba(74, 222, 128, 0.1);
+}
+
+.robocop-badge.robocop-clean::before {
+  background: radial-gradient(ellipse at center, var(--robocop-green-glow) 0%, transparent 70%);
+}
+
+/* ===== Tooltip ===== */
+.robocop-tooltip {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) scale(0.95);
+  width: 280px;
+  background: linear-gradient(135deg, #1e1e32 0%, #151525 100%);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.2s ease;
+  z-index: 10000;
+  box-shadow: 
+    0 10px 40px rgba(0, 0, 0, 0.5),
+    0 0 20px rgba(0, 212, 255, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  pointer-events: none;
+  font-weight: normal;
+  text-align: left;
+  overflow: hidden;
+}
+
+.robocop-badge:hover .robocop-tooltip,
+.robocop-badge.robocop-expanded .robocop-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) scale(1);
+  pointer-events: auto;
+}
+
+/* Tooltip arrow */
+.robocop-tooltip::before {
+  content: '';
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%) rotate(45deg);
+  width: 12px;
+  height: 12px;
+  background: #1e1e32;
+  border-left: 1px solid rgba(255, 255, 255, 0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.robocop-tooltip-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 14px;
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(168, 85, 247, 0.1) 100%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.robocop-verdict {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.robocop-high .robocop-verdict { color: var(--robocop-red); }
+.robocop-medium .robocop-verdict { color: var(--robocop-yellow); }
+.robocop-low .robocop-verdict { color: var(--robocop-blue); }
+.robocop-clean .robocop-verdict { color: var(--robocop-green); }
+
+.robocop-confidence {
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.5);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.robocop-tooltip-body {
+  padding: 12px 14px;
+}
+
+.robocop-reasons {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.robocop-reason {
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.7);
+  line-height: 1.4;
+  padding-left: 4px;
+}
+
+.robocop-tooltip-footer {
+  padding: 10px 14px;
+  background: rgba(0, 0, 0, 0.2);
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.4);
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+
+/* ===== Animations ===== */
+@keyframes robocop-pulse-red {
+  0%, 100% {
+    box-shadow: 
+      0 2px 4px rgba(0, 0, 0, 0.3),
+      0 0 10px var(--robocop-red-glow),
+      inset 0 1px 0 rgba(255, 51, 102, 0.1);
+  }
+  50% {
+    box-shadow: 
+      0 2px 4px rgba(0, 0, 0, 0.3),
+      0 0 20px var(--robocop-red-glow),
+      0 0 30px rgba(255, 51, 102, 0.2),
+      inset 0 1px 0 rgba(255, 51, 102, 0.2);
+  }
+}
+
+@keyframes robocop-scan {
+  0% {
+    background-position: 0% 0%;
+  }
+  100% {
+    background-position: 100% 100%;
+  }
+}
+
+/* ===== Scan line effect on high probability ===== */
+.robocop-badge.robocop-high::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    transparent 0%,
+    rgba(255, 51, 102, 0.03) 50%,
+    transparent 100%
+  );
+  background-size: 100% 4px;
+  pointer-events: none;
+  border-radius: 4px;
+}
+
+/* ===== Responsive adjustments for Reddit layouts ===== */
+
+/* New Reddit */
+shreddit-comment .robocop-badge,
+[data-testid="comment"] .robocop-badge {
+  margin-left: 6px;
+}
+
+/* Old Reddit */
+.comment .robocop-badge {
+  margin-left: 4px;
+}
+
+/* Make sure badge doesn't break layouts */
+.tagline .robocop-badge,
+.comment .robocop-badge {
+  display: inline-flex !important;
+  vertical-align: middle !important;
+}
+
+/* ===== Dark mode adjustments ===== */
+@media (prefers-color-scheme: light) {
+  .robocop-badge {
+    background: linear-gradient(135deg, #f0f0f5 0%, #e0e0e8 100%);
+    border-color: rgba(0, 0, 0, 0.15);
+  }
+  
+  .robocop-tooltip {
+    background: linear-gradient(135deg, #ffffff 0%, #f5f5f8 100%);
+    border-color: rgba(0, 0, 0, 0.1);
+    box-shadow: 
+      0 10px 40px rgba(0, 0, 0, 0.15),
+      inset 0 1px 0 rgba(255, 255, 255, 0.8);
+  }
+  
+  .robocop-tooltip::before {
+    background: #ffffff;
+    border-color: rgba(0, 0, 0, 0.1);
+  }
+  
+  .robocop-reason {
+    color: rgba(0, 0, 0, 0.7);
+  }
+  
+  .robocop-confidence,
+  .robocop-tooltip-footer {
+    color: rgba(0, 0, 0, 0.5);
+  }
 }

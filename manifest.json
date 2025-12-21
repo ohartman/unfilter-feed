@@ -1,23 +1,28 @@
 {
   "manifest_version": 3,
-  "name": "UnfilteredFeed v2",
+  "name": "The Reddit Robocop",
   "version": "1.0.0",
-  "description": "See what YouTube's algorithm is hiding from you",
+  "description": "Detect AI-generated content on Reddit. Serve the public trust. Protect the innocent. Uphold the authenticity.",
   "permissions": [
-    "storage"
+    "storage",
+    "activeTab"
   ],
   "host_permissions": [
-    "https://www.youtube.com/*"
+    "https://www.reddit.com/*",
+    "https://old.reddit.com/*"
   ],
   "content_scripts": [
     {
-      "matches": ["*://*.youtube.com/*"],
+      "matches": [
+        "*://*.reddit.com/*"
+      ],
       "js": ["content.js"],
       "css": ["styles.css"],
       "run_at": "document_idle"
     }
   ],
   "action": {
-    "default_title": "UnfilteredFeed"
+    "default_popup": "popup.html",
+    "default_title": "The Reddit Robocop"
   }
 }
